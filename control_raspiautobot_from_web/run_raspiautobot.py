@@ -23,6 +23,24 @@ pin2.start(0)
 
 
 
+# servo helper function
+def control_servo(action):
+    def change_direction(n1, n2):
+        pin1.ChangeDutyCycle(n1)
+        pin2.ChangeDutyCycle(n2)
+    if action == 'forward':
+        change_direction(10, 2.5)
+    if action == 'reverse':
+        change_direction(2.5, 10)
+    if action == 'right':
+       change_direction(2.5, 0)
+    if action == 'stop':
+       change_direction(0,0)
+
+# dc motor helper function
+def control_dcmotor(action):
+    pass
+
 
 @app.route('/')
 def index():
@@ -35,26 +53,15 @@ def index():
     }
     return render_template('index.html', **templateData)
 
-@app.route("/<deviceName>/<action>")
-def action(deviceName, action):
-
-    def change_direction(n1 ,n2):
-        pin1.ChangeDutyCycle(n1)
-        pin2.ChangeDutyCycle(n2)
-
-    if deviceName == 'servo' and action == 'forward':
-       change_direction(10,2.5)
-    if deviceName == 'servo' and action == 'reverse':
-       change_direction(2.5,10)
-    if deviceName == 'servo' and action == 'right':
-       change_direction(0,2.5)
-    if deviceName == 'servo' and action == 'left':
-       change_direction(2.5,0)
-    if deviceName == 'servo' and action == 'stop':
-       change_direction(0,0)
+@app.route("/<device_name>/<action>")
+def action(device_name, action):
+    if device_name == 'servo':
+        control_servo(action)
+    if device_name == 'dcmotor':
+       control_dcmotor(action)
 
     templateData  = {
-     'servo_status' : action
+      device_name : action
     }
     return render_template('index.html', **templateData)
 
